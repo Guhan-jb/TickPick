@@ -1,9 +1,7 @@
 import streamlit as st
-import openai
+from openai import OpenAI
 
-# Set up your OpenAI API key
-openai.api_key = "KEY"
-
+client = OpenAI(api_key='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')
 # Streamlit app
 def spmain():
     st.title("Text-Shorty")
@@ -13,23 +11,17 @@ def spmain():
 
     # Button to generate summary
     if st.button("Generate "):
-            # Generate summary using OpenAI API
+            # Generate summary using client API
             summary = generate_summary(text)
             st.markdown("## Your Personalised Content")
             st.write(summary)
             # st.warning("Please enter text to summarize.")
 
 def generate_summary(text):
-    # Use the OpenAI API to generate a summary
-    response = openai.Completion.create(
-        engine="text-davinci-003",
-        prompt=text,
-        max_tokens=100,
-        temperature=0.3,
-        top_p=1.0,
-        n=1,
-        stop=None,
-        echo=False
+    # Use the client API to generate a summary
+    response = client.completions.create(
+        model="gpt-3.5-turbo-instruct",
+        prompt="Summerize this : "+text
     )
     summary = response.choices[0].text.strip()
     return summary

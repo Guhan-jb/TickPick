@@ -1,18 +1,12 @@
 import pdfplumber
 import streamlit as st
-import openai
+from openai import OpenAI
 import io
-openai.api_key = 'KEY'
-model_name = 'gpt-3.5-turbo'
+client = OpenAI(api_key='your_api')
 def search_openai(query,num=5):
-    response = openai.Completion.create(
-        engine='text-davinci-003',  # Use the GPT-3.5 engine
-        prompt=query,
-        max_tokens=100,  
-        temperature=0.7, 
-        n=num,
-        stop=None,
-        timeout=10, 
+    response = client.completions.create(
+        model="gpt-3.5-turbo-instruct",
+        prompt=query
     )
     return response.choices[0].text.strip()
 def summarize_pdf(file_path, num_sentences=3):
@@ -20,7 +14,9 @@ def summarize_pdf(file_path, num_sentences=3):
         text = ""
         for page in pdf.pages:
             text += page.extract_text()
-    summary = search_openai("summerize this text"+text)
+    st.write("Text from the document: ")
+    st.write(text)
+    summary = search_openai("summerize this text and the number of sentences are 5 :"+text)
     return summary
 
 def pdfsummerizermain():
@@ -32,6 +28,7 @@ def pdfsummerizermain():
         file_obj = io.BytesIO(uploaded_file.read())
         # Process the PDF contents and generate summary
         summary = summarize_pdf(file_obj)
+        st.write("Summerized text:")
         st.write(summary)
 if __name__=='__main__':
     pdfsummerizermain()

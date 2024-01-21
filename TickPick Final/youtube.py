@@ -2,9 +2,6 @@ import streamlit as st
 from youtube_transcript_api import YouTubeTranscriptApi
 import pysrt
 
-
-
-
 def get_transcript(video_id):
     try:
         transcript = YouTubeTranscriptApi.get_transcript(video_id)
